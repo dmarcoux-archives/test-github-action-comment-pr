@@ -3,15 +3,17 @@ name: Regenerate RuboCop TODOs in Depfu PRs updating RuboCop gems
 on:
   pull_request:
     # Run this workflow when a PR is opened
-    types: [opened]
-#    branches:
-#      # Run this workflow for Depfu PRs updating RuboCop gems (rubocop, rubocop-rspec, etc...)
-#      - 'depfu/update/srcapi/rubocop-*'
-#      # Do not run this workflow for Depfu PRs updating rubocop-ast, since there's nothing extra to do for this gem
-#      - '!depfu/update/srcapi/rubocop-ast-*'
+    # types: [opened]
+    # branches:
+    #   # Run this workflow for Depfu PRs updating RuboCop gems (rubocop, rubocop-rspec, etc...)
+    #   - 'depfu/update/srcapi/rubocop-*'
+    #   # Do not run this workflow for Depfu PRs updating rubocop-ast, since there's nothing extra to do for this gem
+    #   - '!depfu/update/srcapi/rubocop-ast-*'
 
 jobs:
   job:
+    # Run this job for Depfu PRs updating RuboCop gems (rubocop, rubocop-rspec, etc...), but not rubocop-ast as there's nothing extra to do for this gem
+    if: startsWith(github.head_ref, 'depfu/update/srcapi/rubocop-') && !startsWith(github.head_ref, '!depfu/update/srcapi/rubocop-ast-')
     runs-on: ubuntu-latest
     steps:
       # https://github.com/actions/checkout
