@@ -1,0 +1,32 @@
+name: Regenerate RuboCop TODOs in Depfu PRs updating RuboCop gems
+
+on:
+  pull_request:
+    # Run this workflow when a PR is opened
+    types: [opened]
+#    branches:
+#      # Run this workflow for Depfu PRs updating RuboCop gems (rubocop, rubocop-rspec, etc...)
+#      - 'depfu/update/srcapi/rubocop-*'
+#      # Do not run this workflow for Depfu PRs updating rubocop-ast, since there's nothing extra to do for this gem
+#      - '!depfu/update/srcapi/rubocop-ast-*'
+
+jobs:
+  job:
+    runs-on: ubuntu-latest
+    steps:
+      # https://github.com/actions/checkout
+      - uses: actions/checkout@v2
+      # https://github.com/ruby/setup-ruby
+      - uses: ruby/setup-ruby@v1
+        with:
+          working-directory: 'src/api/' # directory where .ruby-version and Gemfile.lock are located
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - name: Regenerate RuboCop TODOs
+        run: bundle exec rake dev:lint:rubocop:auto_gen_config:all
+      - name: Commit changes
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit --message 'Regenerate RuboCop TODOs'
+          git push
