@@ -3,22 +3,28 @@ name: Regenerate RuboCop TODOs in Depfu PRs updating RuboCop gems
 on:
   pull_request:
     # Run this workflow when a PR is opened
-    types: [opened]
-#    branches:
-#      # Run this workflow for Depfu PRs updating RuboCop gems (rubocop, rubocop-rspec, etc...)
-#      - 'depfu/update/srcapi/rubocop-*'
-#      # Do not run this workflow for Depfu PRs updating rubocop-ast, since there's nothing extra to do for this gem
-#      - '!depfu/update/srcapi/rubocop-ast-*'
+    # types: [opened]
+    #
+    # THIS DOESN'T WORK... For a pull_request event, only branches and tags on the base are evaluated. The branch name of the PR branch is the head ref, not the base ref...
+    # This is documented at https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#onpushpull_requestbranchestags
+    # branches:
+    #   # Run this workflow for Depfu PRs updating RuboCop gems (rubocop, rubocop-rspec, etc...)
+    #   - 'depfu/update/srcapi/rubocop-*'
+    #   # Do not run this workflow for Depfu PRs updating rubocop-ast, since there's nothing extra to do for this gem
+    #   - '!depfu/update/srcapi/rubocop-ast-*'
 
 jobs:
   job:
+    # Workaround since branches filters above is only on the base branch, not the head branch.
+    # Using pull_request_target event instead of pull_request could be a solution, but it could lead to security issues since we run the code from the PR and someone could change what the rake task does
+    # Run this job for Depfu PRs updating RuboCop gems (rubocop, rubocop-rspec, etc...), but not rubocop-ast as there's nothing extra to do for this gem
+    if: ${{ startsWith(github.head_ref, 'depfu/update/srcapi/rubocop-') && !startsWith(github.head_ref, '!depfu/update/srcapi/rubocop-ast-') }}
     runs-on: ubuntu-latest
     steps:
       # https://github.com/actions/checkout
       - uses: actions/checkout@v2
-        # does this fix the detached head? https://github.com/actions/checkout/issues/6
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.head_ref }}
       # https://github.com/ruby/setup-ruby
       - uses: ruby/setup-ruby@v1
         with:
