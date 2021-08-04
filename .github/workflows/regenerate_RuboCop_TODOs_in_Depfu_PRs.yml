@@ -22,7 +22,7 @@ jobs:
           working-directory: 'src/api/' # directory where .ruby-version and Gemfile.lock are located
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - name: Regenerate RuboCop TODOs
-        run: bundle exec rake dev:lint:rubocop:auto_gen_config:all
+        run: cd src/api && bundle exec rake dev:lint:rubocop:auto_gen_config:all
       - name: Commit changes
         run: |
           git config user.name github-actions
