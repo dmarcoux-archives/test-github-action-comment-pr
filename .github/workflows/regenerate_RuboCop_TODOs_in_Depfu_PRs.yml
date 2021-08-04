@@ -16,6 +16,7 @@ jobs:
     if: startsWith(github.head_ref, 'depfu/update/srcapi/rubocop-') && !startsWith(github.head_ref, '!depfu/update/srcapi/rubocop-ast-')
     runs-on: ubuntu-latest
     steps:
+      - run: echo ${{ github.head_ref }}
       # https://github.com/actions/checkout
       - uses: actions/checkout@v2
         # does this fix the detached head? https://github.com/actions/checkout/issues/6
