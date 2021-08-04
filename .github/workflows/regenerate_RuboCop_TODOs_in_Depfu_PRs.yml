@@ -16,6 +16,9 @@ jobs:
     steps:
       # https://github.com/actions/checkout
       - uses: actions/checkout@v2
+        # does this fix the detached head? https://github.com/actions/checkout/issues/6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       # https://github.com/ruby/setup-ruby
       - uses: ruby/setup-ruby@v1
         with:
